@@ -32,8 +32,8 @@
 
     <!-- Quick Navigation -->
     <div class="flex gap-2 text-xs">
-      <button onclick="CineSprint.loadCategory('trending')" class="bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold px-3 py-1.5 rounded-lg border border-slate-700 transition">🔥 Trending</button>
-      <button onclick="CineSprint.loadCategory('top_rated')" class="bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold px-3 py-1.5 rounded-lg border border-slate-700 transition">⭐ Top Rated</button>
+      <button onclick="CineSprint.loadCategory('trending')" class="bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold px-3 py-1.5 rounded-lg border border-slate-700 transition cursor-pointer">🔥 Trending</button>
+      <button onclick="CineSprint.loadCategory('top_rated')" class="bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold px-3 py-1.5 rounded-lg border border-slate-700 transition cursor-pointer">⭐ Top Rated</button>
     </div>
   </header>
 
@@ -88,13 +88,22 @@
   </main>
 
   <!-- Movie Details & Trailer Modal -->
-  <div id="movieModal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl w-full max-w-xl space-y-4 animate-fade-in shadow-2xl relative">
-      <button onclick="CineSprint.closeModal()" class="absolute top-3 right-3 text-slate-400 hover:text-white text-xl font-bold p-1">✕</button>
+  <div id="movieModal" onclick="CineSprint.handleBackdropClick(event)" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl w-full max-w-xl max-h-[90vh] flex flex-col shadow-2xl relative">
       
-      <div id="modalContent">
+      <!-- Fixed Header Bar with Clear Close Button -->
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 shrink-0">
+        <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider">Movie Details & Trailer</h3>
+        <button onclick="CineSprint.closeModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-700 transition cursor-pointer">
+          ✕ Close
+        </button>
+      </div>
+
+      <!-- Scrollable Content Area -->
+      <div id="modalContent" class="overflow-y-auto space-y-4 pt-3 flex-1">
         <!-- Dynamic Content Injected Here -->
       </div>
+
     </div>
   </div>
 
@@ -186,6 +195,7 @@
         const modal = document.getElementById("movieModal");
         const container = document.getElementById("modalContent");
         modal.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
         container.innerHTML = `<div class="text-center py-8 text-slate-400">Loading details & official trailers...</div>`;
 
         try {
@@ -242,10 +252,20 @@
       closeModal: function() {
         document.getElementById("movieModal").classList.add("hidden");
         document.getElementById("modalContent").innerHTML = "";
+        document.body.style.overflow = "auto";
+      },
+
+      handleBackdropClick: function(e) {
+        if (e.target.id === "movieModal") {
+          this.closeModal();
+        }
       }
     };
 
     window.addEventListener("DOMContentLoaded", () => CineSprint.init());
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") CineSprint.closeModal();
+    });
   </script>
 </body>
 </html>
